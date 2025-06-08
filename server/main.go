@@ -16,6 +16,25 @@ func (s *server) Say(ctx context.Context, req *pb.SayRequest) (*pb.SayResponse, 
 	return &pb.SayResponse{Message: "hello" + req.GetName()}, nil
 }
 
+type PerRPCCredentials interface {
+	GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error)
+	RequireTransportSecurity() bool
+}
+
+type Client struct {
+}
+
+func (c Client) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
+	return map[string]string{
+		"appId":  "lc",
+		"appKey": "666",
+	}, nil
+}
+
+func (c Client) RequireTransportSecurity() bool {
+	return false
+}
+
 func main() {
 	// 开启端口
 	listen, _ := net.Listen("tcp", ":9090")
