@@ -9,6 +9,25 @@ import (
 	"log"
 )
 
+type PerRPCCredentials interface {
+	GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error)
+	RequireTransportSecurity() bool
+}
+
+type Client struct {
+}
+
+func (c Client) GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error) {
+	return map[string]string{
+		"appId":  "lc",
+		"appKey": "666",
+	}, nil
+}
+
+func (c Client) RequireTransportSecurity() bool {
+	return false
+}
+
 func main() {
 	// 连接server
 	connect, err := grpc.NewClient("127.0.0.1:9090", grpc.WithTransportCredentials(insecure.NewCredentials()))
