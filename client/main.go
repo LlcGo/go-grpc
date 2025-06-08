@@ -29,8 +29,11 @@ func (c Client) RequireTransportSecurity() bool {
 }
 
 func main() {
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	opts = append(opts, grpc.WithPerRPCCredentials(new(Client)))
 	// 连接server
-	connect, err := grpc.NewClient("127.0.0.1:9090", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	connect, err := grpc.NewClient("127.0.0.1:9090", opts...)
 	if err != nil {
 		log.Fatalf("did not connect %v", err)
 	}
